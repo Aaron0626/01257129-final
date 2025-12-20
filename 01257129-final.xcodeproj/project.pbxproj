@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4B8F71F02EF58E4500659881 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4B8F71EF2EF58E4500659881 /* Kingfisher */; };
+		4B8F71FF2EF6A4E400659881 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4B8F71FE2EF6A4E400659881 /* ConfettiSwiftUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		4B573C332ED6B6E300F47615 /* 01257129-final.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "01257129-final.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B8F71FF2EF6A4E400659881 /* ConfettiSwiftUI in Frameworks */,
+				4B8F71F02EF58E4500659881 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +72,8 @@
 			);
 			name = "01257129-final";
 			packageProductDependencies = (
+				4B8F71EF2EF58E4500659881 /* Kingfisher */,
+				4B8F71FE2EF6A4E400659881 /* ConfettiSwiftUI */,
 			);
 			productName = "01257129-final";
 			productReference = 4B573C332ED6B6E300F47615 /* 01257129-final.app */;
@@ -94,6 +103,10 @@
 			);
 			mainGroup = 4B573C2A2ED6B6E300F47615;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4B8F71EE2EF58E4500659881 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				4B8F71FD2EF6A4E400659881 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4B573C342ED6B6E300F47615 /* Products */;
 			projectDirPath = "";
@@ -253,6 +266,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "虛空終端";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要存取相簿以匯入聖遺物截圖進行分析";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要使用相機拍攝聖遺物";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +300,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "虛空終端";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要存取相簿以匯入聖遺物截圖進行分析";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要使用相機拍攝聖遺物";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -328,6 +347,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4B8F71EE2EF58E4500659881 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.2;
+			};
+		};
+		4B8F71FD2EF6A4E400659881 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4B8F71EF2EF58E4500659881 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B8F71EE2EF58E4500659881 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		4B8F71FE2EF6A4E400659881 /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B8F71FD2EF6A4E400659881 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4B573C2B2ED6B6E300F47615 /* Project object */;
 }

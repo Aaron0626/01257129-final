@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct _1257129_finalApp: App {
+    @StateObject private var sharedData = SharedDataModel()
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(sharedData)
         }
     }
 }

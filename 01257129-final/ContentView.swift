@@ -1,24 +1,37 @@
-//
-//  ContentView.swift
-//  01257129-final
-//
-//  Created by user10 on 2025/11/26.
-//
-
 import SwiftUI
+import TipKit
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            // Tab 1: 自創角色
+            CharacterCreatorView()
+                .tabItem {
+                    Label("創生之座", systemImage: "sparkles")
+                }
+            
+            // Tab 2: 聖遺物鑑定
+            ArtifactScannerView()
+                .tabItem {
+                    Label("聖遺物鑑定", systemImage: "bonjour")
+                }
+            
+            // Tab 3: 戰術模擬
+            TacticalSimView()
+                .tabItem {
+                    Label("幽境危戰", systemImage: "shield.righthalf.filled")
+                }
         }
-        .padding()
+        .task {
+            try? Tips.configure([
+                .displayFrequency(.immediate),
+                .datastoreLocation(.applicationDefault)
+            ])
+        }
     }
 }
 
 #Preview {
     ContentView()
+        .environmentObject(SharedDataModel())
 }
