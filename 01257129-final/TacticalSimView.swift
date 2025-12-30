@@ -2,6 +2,35 @@ import SwiftUI
 import FoundationModels
 import TipKit
 import Kingfisher
+import Zoomable
+
+// 提示 1: 告訴使用者圖片可以點擊放大
+struct BossImageTip: Tip {
+    var title: Text { Text("查看弱點細節") }
+    var message: Text? { Text("點擊 Boss 頭像可進入全螢幕模式，並支援雙指縮放查看模型細節。") }
+    var image: Image? { Image(systemName: "plus.magnifyingglass") }
+    
+    var options: [TipOption] {
+        [
+            Tips.MaxDisplayCount(1),
+            Tips.IgnoresDisplayFrequency(true)
+        ]
+    }
+}
+
+// 提示 2: 引導使用者開始模擬
+struct SimulateTip: Tip {
+    var title: Text { Text("啟動戰術推演") }
+    var message: Text? { Text("資料讀取完畢後，點擊此處讓 AI 根據你的角色與聖遺物數據，分析最佳攻略法。") }
+    var image: Image? { Image(systemName: "brain.head.profile") }
+    
+    var options: [TipOption] {
+        [
+            Tips.MaxDisplayCount(1),
+            Tips.IgnoresDisplayFrequency(true)
+        ]
+    }
+}
 
 struct GenshinData: Codable {
     let enemies: [Enemy]
@@ -47,6 +76,12 @@ struct TacticalSimView: View {
     @State private var isLoadingData: Bool = false
     
     @State private var session = LanguageModelSession()
+    @State private var showImageViewer = false
+    
+    @State private var fullscreenBoss: Enemy? = nil
+    
+    let bossImageTip = BossImageTip()
+    let simulateTip = SimulateTip()
     
     var body: some View {
         NavigationStack {
@@ -106,9 +141,17 @@ struct TacticalSimView: View {
                                 HStack(alignment: .top, spacing: 15) {
                                     KFImage(URL(string: boss.imageUrl ?? ""))
                                         .placeholder { Image(systemName: "photo.circle").font(.largeTitle).foregroundStyle(.gray) }
-                                        .resizable().scaledToFill().frame(width: 80, height: 80)
-                                        .clipShape(Circle()).overlay(Circle().stroke(.cyan, lineWidth: 2)).shadow(radius: 5)
-                                    
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 80, height: 80)
+                                        .clipShape(Circle())
+                                        .overlay(Circle().stroke(.cyan, lineWidth: 2))
+                                        .shadow(radius: 5)
+                                        .onTapGesture {
+                                            fullscreenBoss = boss
+                                            bossImageTip.invalidate(reason: .actionPerformed)
+                                        }
+                                        .popoverTip(bossImageTip, arrowEdge: .bottom)
                                     VStack(alignment: .leading) {
                                         Text("目標分析：\(boss.name)").font(.title2.bold()).foregroundStyle(.white)
                                         Text(boss.element).font(.caption).padding(.horizontal, 8).padding(.vertical, 4)
@@ -124,8 +167,16 @@ struct TacticalSimView: View {
                                 // 抗性條 (這裡只列出幾個範例)
                                 VStack(spacing: 8) {
                                     ResistanceRow(name: "物理", value: boss.resistances.physical, color: .gray)
+                                        // 四大元素
                                     ResistanceRow(name: "火元素", value: boss.resistances.pyro, color: .red)
                                     ResistanceRow(name: "水元素", value: boss.resistances.hydro, color: .blue)
+                                    ResistanceRow(name: "冰元素", value: boss.resistances.cryo, color: .cyan)
+                                    ResistanceRow(name: "雷元素", value: boss.resistances.electro, color: .purple)
+                                    
+                                    // 特殊元素
+                                    ResistanceRow(name: "風元素", value: boss.resistances.anemo, color: .mint)
+                                    ResistanceRow(name: "岩元素", value: boss.resistances.geo, color: .yellow)
+                                    ResistanceRow(name: "草元素", value: boss.resistances.dendro, color: .green)
                                 }
                             }
                             .padding()
@@ -203,6 +254,7 @@ struct TacticalSimView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                             .disabled(selectedBoss == nil || isAnalyzing || !sharedData.isReadyForSim)
+                            .popoverTip(simulateTip)
                             
                             // 提示訊息
                             if !sharedData.isReadyForSim {
@@ -300,15 +352,50 @@ struct ResistanceRow: View {
     let value: Double
     let color: Color
     
+    var percentage: Int {
+        Int(value * 100)
+    }
+    
+    var resistanceLevel: (color: Color, icon: String) {
+        if value >= 0.99 { return (.red, "🚫") } // 免疫
+        if value >= 0.5 { return (.orange, "⚠️") } // 高抗
+        if value <= 0.1 { return (.green, "🟢") } // 弱點
+        return (.gray, "") // 普通
+    }
+    
     var body: some View {
         HStack {
-            Text(name).font(.caption).foregroundStyle(.white).frame(width: 50, alignment: .leading)
+            Text(name)
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundStyle(.white)
+                .frame(width: 50, alignment: .leading)
             ZStack(alignment: .leading) {
-                Capsule().fill(.gray.opacity(0.3)).frame(height: 8)
-                Capsule().fill(value > 50 ? .red : color)
-                    .frame(width: CGFloat(min(value, 100)) / 100 * 150, height: 8)
+                Capsule()
+                    .fill(.white.opacity(0.1))
+                    .frame(height: 8)
+                Capsule()
+                    .fill(resistanceLevel.color)
+                    .frame(width: CGFloat(min(value * 1.5, 1.0)) * 150, height: 8)
             }
-            Text("\(Int(value) * 100)%").font(.caption).foregroundStyle(.gray)
+            HStack(spacing: 2) {
+                if value >= 0.99 {
+                    Text("免疫")
+                        .font(.caption).bold()
+                        .foregroundStyle(.red)
+                } else {
+                    Text("\(percentage)%")
+                        .font(.caption).bold()
+                        // 數值顏色跟著抗性等級變
+                        .foregroundStyle(resistanceLevel.color)
+                }
+                
+                // 狀態 Icon (例如 ⚠️)
+                if !resistanceLevel.icon.isEmpty {
+                    Text(resistanceLevel.icon)
+                        .font(.caption2)
+                }
+            }
         }
     }
 }
