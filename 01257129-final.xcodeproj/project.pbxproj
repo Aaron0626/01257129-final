@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4B8F71F02EF58E4500659881 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4B8F71EF2EF58E4500659881 /* Kingfisher */; };
 		4B8F71FF2EF6A4E400659881 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4B8F71FE2EF6A4E400659881 /* ConfettiSwiftUI */; };
+		4B8F72042EF6DB4100659881 /* Zoomable in Frameworks */ = {isa = PBXBuildFile; productRef = 4B8F72032EF6DB4100659881 /* Zoomable */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 			files = (
 				4B8F71FF2EF6A4E400659881 /* ConfettiSwiftUI in Frameworks */,
 				4B8F71F02EF58E4500659881 /* Kingfisher in Frameworks */,
+				4B8F72042EF6DB4100659881 /* Zoomable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,6 +76,7 @@
 			packageProductDependencies = (
 				4B8F71EF2EF58E4500659881 /* Kingfisher */,
 				4B8F71FE2EF6A4E400659881 /* ConfettiSwiftUI */,
+				4B8F72032EF6DB4100659881 /* Zoomable */,
 			);
 			productName = "01257129-final";
 			productReference = 4B573C332ED6B6E300F47615 /* 01257129-final.app */;
@@ -106,6 +109,7 @@
 			packageReferences = (
 				4B8F71EE2EF58E4500659881 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				4B8F71FD2EF6A4E400659881 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+				4B8F72022EF6DB4100659881 /* XCRemoteSwiftPackageReference "Zoomable" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4B573C342ED6B6E300F47615 /* Products */;
@@ -268,7 +272,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "虛空終端";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要存取相簿以匯入聖遺物截圖進行分析";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要使用相機拍攝聖遺物";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要存取相簿以設定角色頭像";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -302,7 +306,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "虛空終端";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要存取相簿以匯入聖遺物截圖進行分析";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要使用相機拍攝聖遺物";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要存取相簿以設定角色頭像";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -365,6 +369,14 @@
 				minimumVersion = 2.0.3;
 			};
 		};
+		4B8F72022EF6DB4100659881 /* XCRemoteSwiftPackageReference "Zoomable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ryohey/Zoomable";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -377,6 +389,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4B8F71FD2EF6A4E400659881 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
 			productName = ConfettiSwiftUI;
+		};
+		4B8F72032EF6DB4100659881 /* Zoomable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B8F72022EF6DB4100659881 /* XCRemoteSwiftPackageReference "Zoomable" */;
+			productName = Zoomable;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
