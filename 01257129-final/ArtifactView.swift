@@ -3,6 +3,7 @@ import FoundationModels
 import PhotosUI
 import TipKit
 import Vision
+import Charts
 import ConfettiSwiftUI
 
 // 取得圖示名稱
@@ -207,6 +208,29 @@ struct ArtifactSlotCard: View {
                                 .foregroundStyle(.yellow)
                                 .padding(6)
                                 .background(.red.opacity(0.8), in: Capsule())
+                        }
+                        Chart {
+                            BarMark(
+                                x: .value("屬性", "爆擊率"),
+                                y: .value("數值", data.critRate * 2) // 爆率權重 x2
+                            )
+                            .foregroundStyle(.yellow)
+                            .annotation(position: .top) {
+                                Text("CRx2")
+                                    .font(.caption2)
+                                    .foregroundStyle(.white)
+                            }
+                            
+                            BarMark(
+                                x: .value("屬性", "爆擊傷害"),
+                                y: .value("數值", data.critDmg)
+                            )
+                            .foregroundStyle(.orange)
+                            .annotation(position: .top) {
+                                Text("CD")
+                                    .font(.caption2)
+                                    .foregroundStyle(.white)
+                            }
                         }
                     }
                 }

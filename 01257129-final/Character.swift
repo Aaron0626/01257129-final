@@ -2,6 +2,7 @@ import SwiftUI
 import FoundationModels
 import PhotosUI
 import TipKit
+import CoreImage.CIFilterBuiltins
 
 // Tips 定義
 struct AvatarTip: Tip {
@@ -70,101 +71,118 @@ struct CharacterCreatorView: View {
                 VStack(spacing: 0) {
                     
                     // --- Header 區域 ---
-                    ZStack(alignment: .bottomLeading) {
-                        
-                        // 中間層：角色框 + 頭像
-                        HStack {
-                            Spacer()
+                    ZStack(alignment: .topTrailing) {
+                        ZStack(alignment: .bottomLeading) {
                             
-                            PhotosPicker(selection: $selectedAvatarItem, matching: .images) {
-                                ZStack {
-                                    if let avatarImage {
-                                        avatarImage
+                            // 中間層：角色框 + 頭像
+                            HStack {
+                                Spacer()
+                                
+                                PhotosPicker(selection: $selectedAvatarItem, matching: .images) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .fill(sharedData.themeColor.opacity(0.95)) // 使用半透明的元素色
+                                            .frame(width: 148, height: 215)
+                                            .offset(y: -3)
+                                            .blendMode(.overlay)
+                                        if let avatarImage {
+                                            avatarImage
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 148, height: 215)
+                                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                                .offset(y: -3)
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .fill(sharedData.themeColor.opacity(0.9))
+                                                .frame(width: 148, height: 215)
+                                                .overlay(
+                                                    VStack(spacing: 6) {
+                                                        Image(systemName: "person.fill")
+                                                            .font(.system(size: 150))
+                                                            .symbolEffect(.pulse)
+                                                    }
+                                                    .foregroundStyle(.white.opacity(0.95))
+                                                )
+                                                .offset(y: -3)
+                                        }
+                                        
+                                        Image(.roleback)
                                             .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 148, height: 215)
-                                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                                            .offset(y: -3)
-                                    } else {
-                                        RoundedRectangle(cornerRadius: 20)
-                                            .fill(Color.gray.opacity(0.5))
-                                            .frame(width: 148, height: 215)
-                                            .overlay(
-                                                VStack(spacing: 6) {
-                                                    Image(systemName: "person.fill")
-                                                        .font(.system(size: 150))
-                                                        .symbolEffect(.pulse)
-                                                }
-                                                .foregroundStyle(.white.opacity(0.95))
-                                            )
-                                            .offset(y: -3)
+                                            .scaledToFit()
+                                            .frame(height: 260)
+                                            .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
+                                    }
+                                }
+                                .popoverTip(avatarTip, arrowEdge: .top)
+                                
+                                Spacer()
+                            }
+                            .padding(.bottom, 20)
+                            
+                            // 文字資訊 (綁定 sharedData)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(sharedData.characterName.isEmpty ? "旅行者" : sharedData.characterName)
+                                    .font(.system(size: 32, weight: .heavy, design: .serif))
+                                    .foregroundStyle(.white)
+                                    .shadow(color: .black.opacity(0.8), radius: 2, x: 2, y: 2)
+                                if !sharedData.constellationName.isEmpty {
+                                    Text(sharedData.constellationName)
+                                        .font(.headline)
+                                        .foregroundStyle(.white.opacity(0.8))
+                                        .shadow(color: .black.opacity(0.5), radius: 1)
+                                }
+                                
+                                HStack(spacing: 8) {
+                                    // 元素
+                                    HStack(spacing: 4) {
+                                        Image(getElementIcon(element: sharedData.selectedElement))
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 20, height: 20)
+                                        
+                                        Text(sharedData.selectedElement)
+                                            .font(.subheadline).bold()
+                                            .foregroundStyle(sharedData.themeColor.opacity(0.9))
                                     }
                                     
-                                    Image(.roleback)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 260)
-                                        .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
-                                }
-                            }
-                            .popoverTip(avatarTip, arrowEdge: .top)
-                            
-                            Spacer()
-                        }
-                        .padding(.bottom, 20)
-                        
-                        // 文字資訊 (綁定 sharedData)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(sharedData.characterName.isEmpty ? "旅行者" : sharedData.characterName)
-                                .font(.system(size: 32, weight: .heavy, design: .serif))
-                                .foregroundStyle(.white)
-                                .shadow(color: .black.opacity(0.8), radius: 2, x: 2, y: 2)
-                            if !sharedData.constellationName.isEmpty {
-                                Text(sharedData.constellationName)
-                                    .font(.headline)
-                                    .foregroundStyle(.white.opacity(0.8))
-                                    .shadow(color: .black.opacity(0.5), radius: 1)
-                            }
-                            
-                            HStack(spacing: 8) {
-                                // 元素
-                                HStack(spacing: 4) {
-                                    Image(getElementIcon(element: sharedData.selectedElement))
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 20, height: 20)
+                                    Text("|").foregroundStyle(.white.opacity(0.4))
                                     
-                                    Text(sharedData.selectedElement)
-                                        .font(.subheadline).bold()
-                                        .foregroundStyle(sharedData.themeColor.opacity(0.9))
+                                    // 武器
+                                    HStack(spacing: 4) {
+                                        Image(getWeaponIcon(weapon: sharedData.selectedWeapon))
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 20, height: 20)
+                                        
+                                        Text(sharedData.selectedWeapon)
+                                            .font(.subheadline).bold()
+                                            .foregroundStyle(.gray.opacity(0.9))
+                                    }
                                 }
-                                
-                                Text("|").foregroundStyle(.white.opacity(0.4))
-                                
-                                // 武器
-                                HStack(spacing: 4) {
-                                    Image(getWeaponIcon(weapon: sharedData.selectedWeapon))
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 20, height: 20)
-                                    
-                                    Text(sharedData.selectedWeapon)
-                                        .font(.subheadline).bold()
-                                        .foregroundStyle(.gray.opacity(0.9))
-                                }
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .background(.ultraThinMaterial, in: Capsule())
+                                .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .background(.ultraThinMaterial, in: Capsule())
-                            .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                            .padding(.leading, 20)
+                            .padding(.bottom, -10)
                         }
-                        .padding(.leading, 20)
-                        .padding(.bottom, -10)
-                    }
-                    .frame(height: 360)
-                    .background(
-                        LinearGradient(colors: [.black.opacity(0.1), .clear], startPoint: .top, endPoint: .bottom)
-                    )
+                        .frame(height: 360)
+                        .background(
+                            LinearGradient(colors: [.black.opacity(0.1), .clear], startPoint: .top, endPoint: .bottom)
+                        )
+                        ShareLink(item: Image(uiImage: generateQRCode(from: "https://genshin.hoyoverse.com/zh-tw/character/\(sharedData.characterName)")), preview: SharePreview("角色QR Code", image: Image(uiImage: generateQRCode(from: "https://genshin.hoyoverse.com")))) {
+                                Image(systemName: "qrcode")
+                                    .font(.title2)
+                                    .foregroundStyle(.white)
+                                    .padding(10)
+                                    .background(.ultraThinMaterial, in: Circle())
+                                    .overlay(Circle().stroke(.white.opacity(0.5), lineWidth: 1))
+                            }
+                            .padding(.top, 60) // 避開安全區域
+                            .padding(.trailing, 20)
+                        }
 
                     // --- 表單區域 ---
                     Form {
@@ -401,17 +419,45 @@ struct CharacterCreatorView: View {
         isNameLoading = false
     }
     
+    func generateQRCode(from string: String) -> UIImage {
+        let context = CIContext()
+        let filter = CIFilter.qrCodeGenerator()
+        filter.message = Data(string.utf8)
+
+        if let outputImage = filter.outputImage {
+            if let cgimg = context.createCGImage(outputImage, from: outputImage.extent) {
+                return UIImage(cgImage: cgimg)
+            }
+        }
+        return UIImage(systemName: "xmark.circle") ?? UIImage()
+    }
+    
     func generateRandomConstellation() async {
         isConstellationLoading = true
         sharedData.constellationName = "..."
         
         let prompt = """
-        請給我一個提瓦特風格的「命之座」名稱。
-        規則：
-        1. 格式為「XX座」，例如：旅人座、仙麟座、錦織座、白鷺座、歌仙座等。
-        2. 請根據名字「\(sharedData.characterName)」和元素「\(sharedData.selectedElement)」來發想一個命之座。
-        3. 只要回傳名稱，不要標點符號。
-        4. 命之座字數2~4個字
+        你是一位《原神》的角色設計師。請為這位角色設計一個**獨特且富含詩意**的「命之座」名稱。
+
+        【角色資訊】
+        - 名字：\(sharedData.characterName)
+        - 元素：\(sharedData.selectedElement)
+        - 武器：\(sharedData.selectedWeapon)
+
+        【設計規則】
+        1. **格式**：2~4 個中文字，並強制以「座」結尾（例如：琉金座）。
+        2. **風格**：必須優雅、古典，類似拉丁文學名的意譯。請使用**動物、傳說生物、植物、或是特殊的器物**作為象徵。
+        3. **絕對禁止**：
+           - ❌ **禁止**直接使用角色的名字（例如：若叫諾亞，不能叫「諾亞座」）。
+           - ❌ **禁止**直接使用元素名稱（例如：不能叫「諾亞風座」、「雷電座」）。
+           - ❌ **禁止**使用過於現代或普通的詞彙（例如：不能叫「帥氣座」、「打架座」）。
+
+        【參考範例】
+        - 好的例子：仙麟座 (甘雨)、錦織座 (千織)、白鷺座 (神里綾華)、鯨天座 (達達利亞)、金狼座、紅死之座、歌仙座。
+        - 壞的例子：旅行者座、火神座、單手劍座。
+
+        【輸出要求】
+        只要回傳一個2~4個字的名稱字串即可，不要直接使用角色名稱和元素，**不要**包含任何標點符號，**不要**使用 Markdown（不要加粗體星號）。
         """
         
         do {
