@@ -14,6 +14,7 @@ struct _1257129_finalApp: App {
     @State private var showMainView = false
         
         init() {
+            try? Tips.resetDatastore()
             // TipKit 設定
             try? Tips.configure([
                 .displayFrequency(.immediate),

@@ -139,19 +139,27 @@ struct TacticalSimView: View {
                         if let boss = selectedBoss {
                             VStack(alignment: .leading, spacing: 15) {
                                 HStack(alignment: .top, spacing: 15) {
-                                    KFImage(URL(string: boss.imageUrl ?? ""))
-                                        .placeholder { Image(systemName: "photo.circle").font(.largeTitle).foregroundStyle(.gray) }
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 80, height: 80)
-                                        .clipShape(Circle())
-                                        .overlay(Circle().stroke(.cyan, lineWidth: 2))
-                                        .shadow(radius: 5)
-                                        .onTapGesture {
-                                            fullscreenBoss = boss
-                                            bossImageTip.invalidate(reason: .actionPerformed)
-                                        }
-                                        .popoverTip(bossImageTip, arrowEdge: .bottom)
+                                    Button {
+                                        fullscreenBoss = boss // 設定要放大的 Boss
+                                        showImageViewer = true // 開啟全螢幕
+                                        bossImageTip.invalidate(reason: .actionPerformed)
+                                    } label: {
+                                        KFImage(URL(string: boss.imageUrl ?? ""))
+                                            .placeholder { Image(systemName: "photo.circle").font(.largeTitle).foregroundStyle(.gray) }
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 80, height: 80)
+                                            .clipShape(Circle())
+                                            .overlay(Circle().stroke(.cyan, lineWidth: 2))
+                                            .shadow(radius: 5)
+                                            .overlay(alignment: .bottomTrailing) {
+                                                Image(systemName: "magnifyingglass.circle.fill")
+                                                    .foregroundStyle(.white, .blue)
+                                                    .font(.title3)
+                                                    .offset(x: 5, y: 5)
+                                            }
+                                    }
+                                    .popoverTip(bossImageTip, arrowEdge: .bottom)
                                     VStack(alignment: .leading) {
                                         Text("目標分析：\(boss.name)").font(.title2.bold()).foregroundStyle(.white)
                                         Text(boss.element).font(.caption).padding(.horizontal, 8).padding(.vertical, 4)
@@ -167,7 +175,7 @@ struct TacticalSimView: View {
                                 // 抗性條 (這裡只列出幾個範例)
                                 VStack(spacing: 8) {
                                     ResistanceRow(name: "物理", value: boss.resistances.physical, color: .gray)
-                                        // 四大元素
+                                    // 四大元素
                                     ResistanceRow(name: "火元素", value: boss.resistances.pyro, color: .red)
                                     ResistanceRow(name: "水元素", value: boss.resistances.hydro, color: .blue)
                                     ResistanceRow(name: "冰元素", value: boss.resistances.cryo, color: .cyan)
@@ -290,6 +298,52 @@ struct TacticalSimView: View {
             }
             .navigationTitle("戰術模擬")
             .navigationBarTitleDisplayMode(.inline)
+            .fullScreenCover(item: $fullscreenBoss) { boss in
+                ZStack(alignment: .topTrailing) {
+                    // 1. 黑色背景
+                    Color.black.ignoresSafeArea()
+                    
+                    // 2. 圖片處理
+                    if let urlString = boss.imageUrl, let url = URL(string: urlString) {
+                        KFImage(url)
+                            .placeholder {
+                                VStack {
+                                    ProgressView()
+                                        .tint(.white)
+                                        .scaleEffect(1.5)
+                                    Text("讀取影像中...")
+                                        .foregroundStyle(.gray)
+                                        .font(.caption)
+                                }
+                            }
+                            .onFailure { error in
+                                print("圖片讀取失敗: \(error)")
+                            }
+                            .resizable()
+                            .scaledToFit()
+                            .zoomable(minZoomScale: 1.0, doubleTapZoomScale: 3.0) // 縮放功能
+                            .ignoresSafeArea()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
+                        // 如果沒有網址，顯示提示
+                        ContentUnavailableView("無圖片資料", systemImage: "photo.slash")
+                            .foregroundStyle(.white)
+                    }
+                    
+                    // 3. 關閉按鈕 (X)
+                    Button {
+                        fullscreenBoss = nil
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 40))
+                            .foregroundStyle(.white.opacity(0.8))
+                            .padding()
+                            .padding(.top, 40)
+                    }
+                }
+                // 確保背景是黑色的
+                .presentationBackground(.black)
+            }
         }
     }
     
