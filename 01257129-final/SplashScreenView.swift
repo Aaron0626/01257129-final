@@ -1,4 +1,5 @@
 import SwiftUI
+import FoundationModels
 
 struct SplashScreenView: View {
     @Binding var isActive: Bool

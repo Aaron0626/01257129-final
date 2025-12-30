@@ -1,6 +1,7 @@
 import SwiftUI
 import PhotosUI
 import Combine
+import FoundationModels
 
 // MARK: - 1. 資料結構定義 (ArtifactData)
 // 將原本散落在 View 裡面的 struct 搬過來這裡，讓全域都能使用
@@ -20,6 +21,13 @@ struct ArtifactData: Identifiable, Equatable {
     var score: Double = 0.0
     var aiComment: String = "準備就緒，請上傳圖片，虛空終端將自動讀取數值..."
     var isAnalyzing: Bool = false
+}
+
+@Generable
+struct CharacterProfile {
+    var name: String
+    var element: String
+    var weapon: String
 }
 
 // MARK: - 2. 共用資料模型 (SharedDataModel)
